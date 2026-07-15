@@ -9,6 +9,99 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+   <script>
+(() => {
+  const snippets = [
+    "holding the line",
+    "crumbling around us",
+    "perceived iniquities",
+    "culturally and politically conservative",
+    "compromise your Christian values",
+    "love the US Flags",
+    "grace and you can feel it"
+  ];
+
+  const findTightest = (needle) => {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT, {
+      acceptNode(el) {
+        const t = (el.textContent || "").toLowerCase();
+        if (!t.includes(needle.toLowerCase())) return NodeFilter.FILTER_SKIP;
+        for (const c of el.children)
+          if ((c.textContent || "").toLowerCase().includes(needle.toLowerCase()))
+            return NodeFilter.FILTER_SKIP;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const hits = []; let n;
+    while ((n = walker.nextNode())) hits.push(n);
+    return hits;
+  };
+
+  const outerCard = (el) => {
+    const usesBQ = !!document.querySelector("blockquote");
+    let card = el.closest("blockquote") || el;
+    if (usesBQ) {
+      while (card.parentElement &&
+             card.parentElement !== document.body &&
+             card.parentElement.querySelectorAll("blockquote").length === 1) {
+        card = card.parentElement;
+      }
+    } else {
+      for (let i = 0; i < 3 && card.parentElement && card.parentElement !== document.body; i++)
+        card = card.parentElement;
+    }
+    return card;
+  };
+
+  const glow = (el) => {
+    el.style.setProperty("border", "1px solid rgba(59,130,246,0.35)", "important");
+    el.style.setProperty("border-radius", "14px", "important");
+    el.style.setProperty("box-shadow",
+      "0 0 8px 2px rgba(59,130,246,0.35), 0 0 18px 6px rgba(59,130,246,0.25)", "important");
+    el.style.setProperty("transition", "box-shadow .4s ease", "important");
+    el.dataset.flagged = "true";
+  };
+
+  const injectPulse = () => {
+    if (document.getElementById("flag-pulse")) return;
+    const st = document.createElement("style");
+    st.id = "flag-pulse";
+    st.textContent = `@keyframes flagPulse{
+      0%,100%{box-shadow:0 0 8px 2px rgba(59,130,246,.30),0 0 18px 6px rgba(59,130,246,.18)}
+      50%{box-shadow:0 0 12px 4px rgba(59,130,246,.55),0 0 26px 10px rgba(59,130,246,.35)}}
+      [data-flagged="true"]{animation:flagPulse 2.4s ease-in-out infinite}`;
+    document.head.appendChild(st);
+  };
+
+  const run = () => {
+    let count = 0;
+    snippets.forEach(s => {
+      findTightest(s).forEach(t => {
+        const card = outerCard(t);
+        if (!card.dataset.flagged) { glow(card); count++; }
+      });
+    });
+    if (count) injectPulse();
+    console.log(`[flag] highlighted ${count} card(s).`);
+    return count;
+  };
+
+  const start = () => {
+    let tries = 0;
+    const tick = () => {
+      const found = run();
+      // keep retrying (up to ~10s) if cards render late
+      if (found < 7 && tries++ < 20) setTimeout(tick, 500);
+    };
+    tick();
+  };
+
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", start);
+  else
+    start();
+})();
+</script>
 <style>
 /* styles.css */
 /* ============================================================
