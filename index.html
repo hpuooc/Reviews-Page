@@ -18,162 +18,8 @@
       rel="stylesheet"
     />
 
-    <script>
-      (() => {
-        const groups = [
-          {
-            color: "59,130,246",
-            snippets: [
-              // blue: conservative / political
-              "holding the line",
-              "crumbling around us",
-              "perceived iniquities",
-              "culturally and politically conservative",
-              "compromise your Christian values",
-              "love the US Flags",
-              "grace and you can feel it",
-            ],
-          },
-          {
-            color: "245,158,11",
-            snippets: [
-              // amber: lukewarm / qualified
-              "isn't a perfect world",
-              "some time under our belts",
-              "not easy sometimes",
-              "take loans out",
-              "if that fits your students",
-            ],
-          },
-        ];
-        const total = groups.reduce((a, g) => a + g.snippets.length, 0);
-
-        const findTightest = (needle) => {
-          const walker = document.createTreeWalker(
-            document.body,
-            NodeFilter.SHOW_ELEMENT,
-            {
-              acceptNode(el) {
-                const t = (el.textContent || "").toLowerCase();
-                if (!t.includes(needle.toLowerCase()))
-                  return NodeFilter.FILTER_SKIP;
-                for (const c of el.children)
-                  if (
-                    (c.textContent || "")
-                      .toLowerCase()
-                      .includes(needle.toLowerCase())
-                  )
-                    return NodeFilter.FILTER_SKIP;
-                return NodeFilter.FILTER_ACCEPT;
-              },
-            },
-          );
-          const hits = [];
-          let n;
-          while ((n = walker.nextNode())) hits.push(n);
-          return hits;
-        };
-
-        const outerCard = (el) => {
-          const usesBQ = !!document.querySelector("blockquote");
-          let card = el.closest("blockquote") || el;
-          if (usesBQ) {
-            while (
-              card.parentElement &&
-              card.parentElement !== document.body &&
-              card.parentElement.querySelectorAll("blockquote").length === 1
-            ) {
-              card = card.parentElement;
-            }
-          } else {
-            for (
-              let i = 0;
-              i < 3 &&
-              card.parentElement &&
-              card.parentElement !== document.body;
-              i++
-            )
-              card = card.parentElement;
-          }
-          return card;
-        };
-
-        const glow = (el, c) => {
-          el.style.setProperty(
-            "border",
-            `1px solid rgba(${c},0.35)`,
-            "important",
-          );
-          el.style.setProperty("border-radius", "14px", "important");
-          el.style.setProperty(
-            "box-shadow",
-            `0 0 8px 2px rgba(${c},0.35), 0 0 18px 6px rgba(${c},0.25)`,
-            "important",
-          );
-          el.style.setProperty(
-            "transition",
-            "box-shadow .4s ease",
-            "important",
-          );
-          el.dataset.flagged = c;
-        };
-
-        const injectPulse = () => {
-          if (document.getElementById("flag-pulse")) return;
-          const st = document.createElement("style");
-          st.id = "flag-pulse";
-          st.textContent = `
-      @keyframes flagBlue{
-        0%,100%{box-shadow:0 0 8px 2px rgba(59,130,246,.30),0 0 18px 6px rgba(59,130,246,.18)}
-        50%{box-shadow:0 0 12px 4px rgba(59,130,246,.55),0 0 26px 10px rgba(59,130,246,.35)}}
-      @keyframes flagAmber{
-        0%,100%{box-shadow:0 0 8px 2px rgba(245,158,11,.30),0 0 18px 6px rgba(245,158,11,.18)}
-        50%{box-shadow:0 0 12px 4px rgba(245,158,11,.55),0 0 26px 10px rgba(245,158,11,.35)}}
-      [data-flagged="59,130,246"]{animation:flagBlue 2.4s ease-in-out infinite}
-      [data-flagged="245,158,11"]{animation:flagAmber 2.4s ease-in-out infinite}`;
-          document.head.appendChild(st);
-        };
-
-        const run = () => {
-          let count = 0;
-          groups.forEach((g) =>
-            g.snippets.forEach((s) => {
-              findTightest(s).forEach((t) => {
-                const card = outerCard(t);
-                if (!card.dataset.flagged) {
-                  glow(card, g.color);
-                  count++;
-                }
-              });
-            }),
-          );
-          if (count) injectPulse();
-          console.log(`[flag] highlighted ${count} card(s).`);
-          return count;
-        };
-
-        const start = () => {
-          let tries = 0;
-          const tick = () => {
-            const found = run();
-            if (found < total && tries++ < 20) setTimeout(tick, 500);
-          };
-          tick();
-        };
-
-        if (document.readyState === "loading")
-          document.addEventListener("DOMContentLoaded", start);
-        else start();
-      })();
-    </script>
-
     <style>
       /* styles.css */
-      /* ============================================================
-   High Point University — Life Skills
-   Apple-style light product page, 2026
-   Bitter (headers) · Poppins (everything else)
-   ============================================================ */
 
       :root {
         /* Brand palette */
@@ -6424,20 +6270,6 @@
           <article class="fam-card">
             <span class="fam-card__mark" aria-hidden="true">“</span>
             <blockquote class="fam-card__q">
-              They deliver on their promise of a pro god, family, and country
-              campus (love the US Flags) and stay true to their mission.
-            </blockquote>
-            <div class="fam-card__more"></div>
-            <div class="fam-card__foot">
-              <div class="fam-card__id">
-                <div class="fam-card__by">Brian K.</div>
-                <div class="fam-card__loc">Glastonbury, CT</div>
-              </div>
-            </div>
-          </article>
-          <article class="fam-card">
-            <span class="fam-card__mark" aria-hidden="true">“</span>
-            <blockquote class="fam-card__q">
               Opportunities are amazing
             </blockquote>
             <div class="fam-card__more"></div>
@@ -6445,22 +6277,6 @@
               <div class="fam-card__id">
                 <div class="fam-card__by">Renee G.</div>
                 <div class="fam-card__loc">Davidson, NC</div>
-              </div>
-            </div>
-          </article>
-          <article class="fam-card">
-            <span class="fam-card__mark" aria-hidden="true">“</span>
-            <blockquote class="fam-card__q">
-              It is the best university in that it is academically excellent,
-              culturally and politically conservative and values-driven (so
-              important!), safe, stunning, and I feel our son is in good hands
-              there.
-            </blockquote>
-            <div class="fam-card__more"></div>
-            <div class="fam-card__foot">
-              <div class="fam-card__id">
-                <div class="fam-card__by">Jill T.</div>
-                <div class="fam-card__loc">Ponte Vedra Beach, FL</div>
               </div>
             </div>
           </article>
@@ -8417,21 +8233,6 @@
           <article class="fam-card">
             <span class="fam-card__mark" aria-hidden="true">“</span>
             <blockquote class="fam-card__q">
-              As our institutions are crumbling around us on a daily basis, High
-              Point is bucking the trend, they are Unapologetically a God,
-              Family Country campus.
-            </blockquote>
-            <div class="fam-card__more"></div>
-            <div class="fam-card__foot">
-              <div class="fam-card__id">
-                <div class="fam-card__by">Michael F.</div>
-                <div class="fam-card__loc">Brick, NJ</div>
-              </div>
-            </div>
-          </article>
-          <article class="fam-card">
-            <span class="fam-card__mark" aria-hidden="true">“</span>
-            <blockquote class="fam-card__q">
               Wonderful facilities, caring, positive, professors and staff. Love
               the what HPU stands for - God, Family, Country
             </blockquote>
@@ -9399,26 +9200,6 @@
               <div class="fam-card__id">
                 <div class="fam-card__by">Kerri D.</div>
                 <div class="fam-card__loc">Windham</div>
-              </div>
-            </div>
-          </article>
-          <article class="fam-card">
-            <span class="fam-card__mark" aria-hidden="true">“</span>
-            <blockquote class="fam-card__q">
-              God, family, country. My husband and I can't think of any other
-              university that so proudly and unapologetically shares these
-              values. We love how Dr. Qubein leads with the expectation that
-              they are not a university of activists, but ACTIONISTS, a
-              community that strives to work toward positive change instead of
-              talk and complain about perceived iniquities. We really believe
-              our daughter will continue to grow and thrive in an environment
-              that embraces our family values.
-            </blockquote>
-            <div class="fam-card__more"></div>
-            <div class="fam-card__foot">
-              <div class="fam-card__id">
-                <div class="fam-card__by">Michelle B.</div>
-                <div class="fam-card__loc">Tyngsboro, Massachusetts</div>
               </div>
             </div>
           </article>
